@@ -207,8 +207,10 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
 }
 /* NEVICATA SULLA PAGINA PRINCIPALE */
 
+/* EFFETTO NEVE */
 #page-home {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
 }
 
@@ -217,6 +219,7 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
   content: "";
   position: absolute;
   inset: 0;
+  display: block;
   pointer-events: none;
   z-index: 0;
   background-repeat: repeat;
@@ -230,7 +233,7 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
     radial-gradient(2px 2px at 300px 250px, #fff 99%, transparent);
   background-size: 350px 350px;
   animation: snowfall 12s linear infinite;
-  opacity: 0.65;
+  opacity: 0.75;
 }
 
 #page-home::after {
@@ -239,8 +242,8 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
     radial-gradient(3px 3px at 200px 40px, #fff 99%, transparent),
     radial-gradient(2px 2px at 280px 220px, #fff 99%, transparent);
   background-size: 250px 250px;
-  animation: snowfall 20s linear infinite;
-  opacity: 0.4;
+  animation: snowfall 18s linear infinite;
+  opacity: 0.6;
 }
 
 #page-home > * {
@@ -254,5 +257,22 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
   }
   to {
     background-position: 100px 350px;
+  }
+}
+
+/* CORREZIONE PER CELLULARI */
+@media (max-width: 700px) {
+  #page-home::before,
+  #page-home::after {
+    display: block !important;
+    animation-play-state: running !important;
+  }
+
+  #page-home::before {
+    opacity: 0.85;
+  }
+
+  #page-home::after {
+    opacity: 0.7;
   }
 }
