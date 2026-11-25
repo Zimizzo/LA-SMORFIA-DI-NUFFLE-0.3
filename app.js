@@ -41,6 +41,7 @@
       }) : null;
 
   let cards = [];
+  let reservations = [];
   let marked = new Set();
   let currentCard = null;
   let adminCode = "";
@@ -86,12 +87,113 @@
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener("click", () => setTimeout(route, 0)));
   $("menu-toggle").addEventListener("click", () => $("main-nav").classList.toggle("open"));
 
+
   function renderCards() {
     const grid = $("cards-grid");
+
     if (!cards.length) {
       grid.innerHTML = `<div class="notice" style="grid-column:1/-1">Non ci sono ancora cartelle. L'organizzatore deve generare una partita.</div>`;
       return;
     }
+
+    const term = $("card-search").value.trim();
+    const list = cards.filter(c => !term || String(c.card_number).includes(term));
+
+    grid.innerHTML = list.map(c => {
+      const ids = (c.events || []).map(Number);
+      const count = ids.filter(id => marked.has(id)).length;
+      const reservation = reservations.find(r => String(r.card_id) === String(c.id));
+
+      const reservationHtml = reservation
+        ? `<div class="notice">🔒 Prenotata da <strong>${esc(reservation.player_name)}</strong></div>`
+        : `<div class="notice success">🟢 Disponibile</div>`;
+
+      const reservationButton = reservation
+        ? ""
+        : `<button class="btn btn-gold" data-reserve="${esc(c.id)}">Prenota cartella</button>`;
+
+      return `<article class="card-tile">
+        <div class="tile-top">
+          <span class="tile-number">CARTELLA #${c.card_number}</span>
+          <span class="tile-count">${count}/6 segnati</span>
+        </div>
+        ${reservationHtml}
+        <div class="mini-events">
+          ${ids.map(id => `<div class="mini-event ${marked.has(id)?"done":""}">
+            <span class="event-badge">${String(id).padStart(2,"0")}</span>
+            <span>${esc(eventName(id))}</span>
+          </div>`).join("")}
+        </div>
+        <div class="tile-actions">
+          ${reservationButton}
+          <button class="btn btn-ghost" data-open="${esc(c.id)}">Apri cartella</button>
+          <button class="btn btn-ghost" data-share="${esc(c.id)}" aria-label="Condividi cartella">↗</button>
+        </div>
+      </article>`;
+    }).join("") || `<div class="notice" style="grid-column:1/-1">Nessuna cartella corrisponde alla ricerca.</div>`;
+
+    grid.querySelectorAll("[data-open]").forEach(b =>
+      b.addEventListener("click", () => {
+        location.hash = "cartella=" + encodeURIComponent(b.dataset.open);
+      })
+    );
+
+    grid.querySelectorAll("[data-share]").forEach(b =>
+      b.addEventListener("click", () => shareCard(b.dataset.share))
+    );
+
+    grid.querySelectorAll("[data-reserve]").forEach(b =>
+      b.addEventListener("click", () => reserveCard(b.dataset.reserve))
+    );
+  }
+
+  async function reserveCard(cardId) {
+    if (!supabase) return toast("Connessione a Supabase non disponibile.");
+
+    const name = prompt("Inserisci il tuo nome per prenotare questa cartella:");
+
+    if (name === null) return;
+
+    const playerName = name.trim();
+
+    if (playerName.length < 2 || playerName.length > 30) {
+      return toast("Il nome deve contenere da 2 a 30 caratteri.");
+    }
+
+    try {
+      const { error } = await supabase.rpc("reserve_nuffle_card", {
+        p_card_id: cardId,
+        p_player_name: playerName
+      });
+
+      if (error) throw error;
+
+      await loadReservations();
+      toast("Cartella prenotata con successo!");
+    } catch (e) {
+      console.error(e);
+      toast(e.message?.includes("già prenotata") || e.message?.includes("nome già utilizzato")
+        ? "Cartella già prenotata oppure nome già utilizzato."
+        : "Non è stato possibile prenotare la cartella.");
+    }
+  }
+
+  async function loadReservations() {
+    if (!supabase) return;
+
+    const { data, error } = await supabase
+      .from("nuffle_reservations")
+      .select("card_id,player_name,created_at");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    reservations = data || [];
+    refreshViews();
+  }
+
     const term = $("card-search").value.trim();
     const list = cards.filter(c => !term || String(c.card_number).includes(term));
     grid.innerHTML = list.map(c => {
@@ -163,12 +265,22 @@
       renderCards(); renderEvents(); return;
     }
     try {
-      const [{data:cardRows,error:cardErr},{data:markRows,error:markErr}] = await Promise.all([
-        supabase.from("nuffle_cards").select("id,card_number,events").order("card_number"),
-        supabase.from("nuffle_event_marks").select("event_id,marked")
+      const [
+  {data:cardRows,error:cardErr},
+  {data:markRows,error:markErr},
+  {data:reservationRows,error:reservationErr}
+] = await Promise.all([
+  supabase.from("nuffle_cards").select("id,card_number,events").order("card_number"),
+  supabase.from("nuffle_event_marks").select("event_id,marked"),
+  supabase.from("nuffle_reservations").select("card_id,player_name,created_at")
+]);
       ]);
-      if (cardErr) throw cardErr; if (markErr) throw markErr;
-      cards = cardRows || [];
+     if (cardErr) throw cardErr;
+if (markErr) throw markErr;
+if (reservationErr) throw reservationErr;
+
+cards = cardRows || [];
+reservations = reservationRows || [];
       marked = new Set((markRows || []).filter(m => m.marked).map(m => Number(m.event_id)));
       setNotice("cards-status",cards.length ? `${cards.length} cartelle disponibili · eventi sincronizzati in tempo reale.` : "Nessuna cartella generata: l'organizzatore deve avviare la partita.","success");
       refreshViews();
