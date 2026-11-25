@@ -315,10 +315,84 @@
       .on("postgres_changes",{event:"*",schema:"public",table:"nuffle_reservations"}, () => loadReservations())
       .subscribe();
   }
-  function renderAdminStats() {
-    const el=$("admin-stats"); if (!el) return;
-    el.innerHTML=`<div class="stat"><b>${cards.length}</b><span>CARTELLE</span></div><div class="stat"><b>${marked.size}/30</b><span>EVENTI SEGNATI</span></div><div class="stat"><b>${cards.reduce((s,c)=>s+(c.events||[]).filter(id=>marked.has(Number(id))).length,0)}</b><span>SPUNTE TOTALI SULLE CARTELLE</span></div>`;
+ function renderAdminStats() {
+  const el = $("admin-stats");
+  if (!el) return;
+
+  el.innerHTML = `
+    <div class="stat"><b>${cards.length}</b><span>CARTELLE</span></div>
+    <div class="stat"><b>${marked.size}/30</b><span>EVENTI SEGNATI</span></div>
+    <div class="stat"><b>${cards.reduce((s,c)=>s+(c.events||[]).filter(id=>marked.has(Number(id))).length,0)}</b><span>SPUNTE TOTALI SULLE CARTELLE</span></div>
+  `;
+
+  renderAdminReservations();
+}
+
+function renderAdminReservations() {
+  const tools = $("admin-tools");
+  if (!tools) return;
+
+  let panel = $("admin-reservations");
+
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.id = "admin-reservations";
+    panel.className = "admin-reservations";
+    tools.appendChild(panel);
   }
+
+  const sorted = [...reservations].sort((a, b) => {
+    const cardA = getCard(a.card_id)?.card_number || 0;
+    const cardB = getCard(b.card_id)?.card_number || 0;
+    return cardA - cardB;
+  });
+
+  panel.innerHTML = `
+    <h3>Gestione prenotazioni</h3>
+    ${
+      sorted.length
+        ? sorted.map(r => {
+            const card = getCard(r.card_id);
+            const number = card ? card.card_number : "?";
+
+            return `
+              <div class="notice reservation-admin-row">
+                <span>
+                  <strong>Cartella #${number}</strong>
+                  — ${esc(r.player_name)}
+                </span>
+                <button
+                  class="btn btn-ghost"
+                  data-cancel-reservation="${esc(r.card_id)}">
+                  Annulla prenotazione
+                </button>
+              </div>
+            `;
+          }).join("")
+        : `<div class="notice">Non ci sono prenotazioni attive.</div>`
+    }
+  `;
+
+  panel.querySelectorAll("[data-cancel-reservation]").forEach(button => {
+    button.addEventListener("click", () => {
+      const cardId = button.dataset.cancelReservation;
+      const reservation = reservations.find(r => String(r.card_id) === String(cardId));
+      if (!reservation) return;
+
+      const card = getCard(cardId);
+      const number = card ? card.card_number : "?";
+
+      if (!confirm(
+        `Vuoi annullare la prenotazione della cartella #${number}, intestata a ${reservation.player_name}?`
+      )) return;
+
+      adminAction({
+        action: "cancel-reservation",
+        card_id: cardId
+      });
+    });
+  });
+}
   async function shareCard(id) {
     const card=getCard(id); if (!card) return;
     const url = `${location.origin}${location.pathname}#cartella=${encodeURIComponent(card.id)}`;
@@ -367,21 +441,56 @@
     if (!confirm("Vuoi azzerare tutti gli eventi segnati per tutti i partecipanti?")) return;
     await adminAction({action:"reset"});
   });
-  async function adminAction(payload) {
-    if (!adminCode) return toast("Sessione organizzatore scaduta. Accedi di nuovo.");
-    try {
-      const response=await fetch(`${cfg.SUPABASE_URL}/functions/v1/generate-game`,{
-        method:"POST",headers:{"Content-Type":"application/json","apikey":cfg.SUPABASE_ANON_KEY,"Authorization":`Bearer ${cfg.SUPABASE_ANON_KEY}`,"x-organizer-code":adminCode},
-        body:JSON.stringify(payload)
-      });
-      const result=await response.json();
-      if (!response.ok) throw new Error(result.error||"Operazione non riuscita");
-      await Promise.all([reloadCards(),loadMarks()]);
-      $("admin-message").classList.remove("hidden");
-      setNotice("admin-message",payload.action==="generate"?`Nuova partita creata: ${result.count} cartelle generate.`:"Tutti gli eventi sono stati azzerati.", "success");
-      toast("Operazione completata.");
-    } catch(e) { console.error(e); $("admin-message").classList.remove("hidden"); setNotice("admin-message",e.message||"Errore durante l'operazione.","error"); }
+ 
+async function adminAction(payload) {
+  if (!adminCode) return toast("Sessione organizzatore scaduta. Accedi di nuovo.");
+
+  try {
+    const response = await fetch(`${cfg.SUPABASE_URL}/functions/v1/generate-game`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": cfg.SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${cfg.SUPABASE_ANON_KEY}`,
+        "x-organizer-code": adminCode
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Operazione non riuscita");
+    }
+
+    if (payload.action === "cancel-reservation") {
+      await loadReservations();
+    } else {
+      await Promise.all([reloadCards(), loadMarks()]);
+    }
+
+    $("admin-message").classList.remove("hidden");
+
+    let message = "Operazione completata.";
+
+    if (payload.action === "generate") {
+      message = `Nuova partita creata: ${result.count} cartelle generate.`;
+    } else if (payload.action === "reset") {
+      message = "Tutti gli eventi sono stati azzerati.";
+    } else if (payload.action === "cancel-reservation") {
+      message = "Prenotazione annullata. La cartella è nuovamente disponibile.";
+    }
+
+    setNotice("admin-message", message, "success");
+    toast("Operazione completata.");
+
+  } catch (e) {
+    console.error(e);
+    $("admin-message").classList.remove("hidden");
+    setNotice("admin-message", e.message || "Errore durante l'operazione.", "error");
   }
+}
+
   function renderAdminStatsInitial() { renderAdminStats(); }
   $("main-nav").addEventListener("click",e=>{const a=e.target.closest("a[data-page]");if(a){e.preventDefault();location.hash=a.getAttribute("href").slice(1);}});
   renderAdminStatsInitial();
