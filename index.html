@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#211333">
+  <meta name="description" content="La Smorfia di Nuffle — la tombola natalizia di Blood Bowl del BolognaBowl.">
+  <title>La Smorfia di Nuffle | BolognaBowl</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div class="snow" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="La Smorfia di Nuffle, home">
+      <span class="brand-mark">☃</span>
+      <span><b>BOLOGNABOWL</b><small>LA SMORFIA DI NUFFLE</small></span>
+    </a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Apri menu">☰</button>
+    <nav id="main-nav">
+      <a href="#home" data-page="home">Home</a>
+      <a href="#cartelle" data-page="cartelle">Cartelle</a>
+      <a href="#eventi" data-page="eventi">Eventi</a>
+      <a href="#organizzatore" data-page="organizzatore">Organizzatore</a>
+    </nav>
+    <span class="live-pill"><i></i> LIVE</span>
+  </header>
+
+  <main>
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">✦ EDIZIONE NATALIZIA · BOLOGNABOWL ✦</div>
+          <h1>LA SMORFIA<br><em>DI NUFFLE</em></h1>
+          <p class="hero-lead">La fortuna è cieca. Nuffle, invece, ci vede benissimo.</p>
+          <p class="hero-text">Benvenuti alla tombola più imprevedibile del Blood Bowl! Dimenticate ambo, terno e quaterna: qui si festeggiano i doppi uno, i blocchi improbabili, le casualty e tutte quelle meravigliose catastrofi che solo Nuffle sa regalare.</p>
+          <p class="hero-text">Scegliete la vostra cartella, tenete gli occhi sul campo e segnate gli eventi quando accadono. Le cartelle sono condivise: ogni evento segnato sarà visibile in tempo reale a tutti i partecipanti.</p>
+          <div class="hero-actions">
+            <a class="btn btn-gold" href="#cartelle">Scegli la tua cartella <span>→</span></a>
+            <a class="btn btn-ghost" href="#eventi">Scopri gli eventi</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Illustrazione natalizia fantasy">
+          <div class="moon"></div><div class="tree tree-one">♠</div><div class="tree tree-two">♠</div>
+          <div class="gift gift-one">✦</div><div class="gift gift-two">★</div>
+          <div class="ornament ornament-one"></div><div class="ornament ornament-two"></div>
+          <div class="mascot">🎅</div>
+          <div class="snowball s1"></div><div class="snowball s2"></div><div class="snowball s3"></div>
+          <div class="art-caption">CHE NUFFLE SIA CON VOI</div>
+        </div>
+      </div>
+      <div class="rule-strip">
+        <div><strong>30</strong><span>EVENTI POSSIBILI</span></div>
+        <div><strong>6</strong><span>EVENTI PER CARTELLA</span></div>
+        <div><strong>∞</strong><span>MODI PER DISPERARSI</span></div>
+      </div>
+      <div class="intro-bottom">
+        <div class="section-kicker">LE REGOLE DEL GIOCO</div>
+        <h2>Il destino è nelle mani di Nuffle.</h2>
+        <div class="rule-grid">
+          <article><span class="rule-icon">🎟️</span><h3>Prendi una cartella</h3><p>Scegli una cartella tra quelle generate dall'organizzatore. Ogni cartella contiene sei eventi diversi.</p></article>
+          <article><span class="rule-icon">🏈</span><h3>Segna gli eventi</h3><p>Quando un evento si verifica in partita, selezionalo. La spunta sarà condivisa con tutti i partecipanti.</p></article>
+          <article><span class="rule-icon">🎄</span><h3>Affidati alla sorte</h3><p>Segui la partita, incrocia le dita e spera che Nuffle abbia in serbo un regalo per te.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-cartelle">
+      <div class="page-heading"><div class="section-kicker">LA TUA FORTUNA</div><h1>Le cartelle</h1><p>Scegli una cartella e tieni d'occhio gli eventi che contiene.</p></div>
+      <div class="toolbar">
+        <label class="field grow">Il tuo soprannome <input id="player-name" maxlength="24" placeholder="Es. Il macellaio di Nuffle"></label>
+        <label class="field">Cerca cartella <input id="card-search" type="search" placeholder="Numero…"></label>
+      </div>
+      <div id="cards-status" class="notice">Connessione al database in corso…</div>
+      <div id="cards-grid" class="cards-grid"></div>
+    </section>
+
+    <section class="page" id="page-mia-cartella">
+      <div class="page-heading"><div class="section-kicker">LA TUA CARTELLA</div><h1 id="my-card-title">Cartella</h1><p id="my-card-subtitle">Segna gli eventi quando si verificano in partita.</p></div>
+      <div class="card-toolbar"><a class="text-link" href="#cartelle">← Tutte le cartelle</a><button class="btn btn-ghost btn-small" id="share-card">Condividi cartella ↗</button></div>
+      <div id="my-card" class="single-card"></div>
+    </section>
+
+    <section class="page" id="page-eventi">
+      <div class="page-heading"><div class="section-kicker">IL LIBRO DEL DESTINO</div><h1>I 30 eventi</h1><p>Quando succede qualcosa in campo, segnalo qui: la selezione si aggiorna anche sulle cartelle.</p></div>
+      <div class="event-progress"><span id="event-progress-text">0 / 30 eventi segnati</span><div class="progress-track"><i id="event-progress-bar"></i></div></div>
+      <div id="events-grid" class="events-grid"></div>
+    </section>
+
+    <section class="page" id="page-organizzatore">
+      <div class="page-heading"><div class="section-kicker">SOLO PER CHI TIRA I FILI</div><h1>Area organizzatore</h1><p>Generazione cartelle e gestione della partita sono protette da un codice segreto.</p></div>
+      <div id="admin-login" class="admin-panel">
+        <div class="lock-icon">🔐</div><h2>Accesso organizzatore</h2><p>Inserisci il codice segreto fornito dall'organizzatore.</p>
+        <form id="admin-login-form"><label class="field">Codice organizzatore<input id="admin-code" type="password" autocomplete="current-password" placeholder="Codice segreto" required></label><button class="btn btn-gold" type="submit">Entra nell'area riservata</button></form>
+        <p class="fine-print">Il codice viene verificato dal server e non è salvato nel codice pubblico del sito.</p>
+      </div>
+      <div id="admin-tools" class="admin-panel hidden">
+        <div class="admin-top"><div><div class="section-kicker">CONTROLLO PARTITA</div><h2>Gestione della Smorfia</h2></div><button id="admin-logout" class="btn btn-ghost btn-small">Esci</button></div>
+        <form id="generate-form" class="generate-form">
+          <label class="field">Numero di cartelle<input id="card-count" type="number" min="1" max="100" value="10" required></label>
+          <button class="btn btn-gold" type="submit">✦ Genera nuove cartelle</button>
+        </form>
+        <div class="warning-box"><strong>Attenzione:</strong> generare una nuova partita sostituisce tutte le cartelle attuali e azzera gli eventi segnati per tutti.</div>
+        <div class="admin-stats" id="admin-stats"></div>
+        <button id="reset-marks" class="btn btn-danger">Azzera tutti gli eventi segnati</button>
+        <div id="admin-message" class="notice hidden"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="footer-star">✦</div><b>BOLOGNABOWL</b><span>CHE I DADI SIANO CON VOI, MA SOPRATTUTTO CHE NUFFLE SIA DISTRATTO.</span><small>LA SMORFIA DI NUFFLE · EDIZIONE NATALIZIA</small></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
