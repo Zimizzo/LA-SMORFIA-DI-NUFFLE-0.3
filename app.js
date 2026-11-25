@@ -246,36 +246,51 @@
     if (currentCard) renderSingleCard();
     renderAdminStats();
   }
+
   async function loadData() {
     if (!supabase) {
       setNotice("cards-status","App pronta, ma non ancora collegata a Supabase. Segui SETUP.md per configurare il database.","error");
-      renderCards(); renderEvents(); return;
+      renderCards();
+      renderEvents();
+      return;
     }
+
     try {
       const [
-  {data:cardRows,error:cardErr},
-  {data:markRows,error:markErr},
-  {data:reservationRows,error:reservationErr}
-] = await Promise.all([
-  supabase.from("nuffle_cards").select("id,card_number,events").order("card_number"),
-  supabase.from("nuffle_event_marks").select("event_id,marked"),
-  supabase.from("nuffle_reservations").select("card_id,player_name,created_at")
-]);
+        {data:cardRows,error:cardErr},
+        {data:markRows,error:markErr},
+        {data:reservationRows,error:reservationErr}
+      ] = await Promise.all([
+        supabase.from("nuffle_cards").select("id,card_number,events").order("card_number"),
+        supabase.from("nuffle_event_marks").select("event_id,marked"),
+        supabase.from("nuffle_reservations").select("card_id,player_name,created_at")
       ]);
-     if (cardErr) throw cardErr;
-if (markErr) throw markErr;
-if (reservationErr) throw reservationErr;
 
-cards = cardRows || [];
-reservations = reservationRows || [];
+      if (cardErr) throw cardErr;
+      if (markErr) throw markErr;
+      if (reservationErr) throw reservationErr;
+
+      cards = cardRows || [];
+      reservations = reservationRows || [];
       marked = new Set((markRows || []).filter(m => m.marked).map(m => Number(m.event_id)));
-      setNotice("cards-status",cards.length ? `${cards.length} cartelle disponibili · eventi sincronizzati in tempo reale.` : "Nessuna cartella generata: l'organizzatore deve avviare la partita.","success");
+
+      setNotice(
+        "cards-status",
+        cards.length
+          ? `${cards.length} cartelle disponibili · eventi sincronizzati in tempo reale.`
+          : "Nessuna cartella generata: l'organizzatore deve avviare la partita.",
+        "success"
+      );
+
       refreshViews();
       subscribeRealtime();
+
     } catch (e) {
-      console.error(e); setNotice("cards-status","Errore di connessione al database. Controlla URL, chiave e configurazione SQL.","error");
+      console.error(e);
+      setNotice("cards-status","Errore di connessione al database. Controlla URL, chiave e configurazione SQL.","error");
     }
   }
+
   async function loadMarks() {
     if (!supabase) return;
     const {data,error} = await supabase.from("nuffle_event_marks").select("event_id,marked");
