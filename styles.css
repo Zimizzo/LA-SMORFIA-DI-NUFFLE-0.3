@@ -191,3 +191,15 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
   object-fit: contain;
   filter: brightness(0) saturate(100%) invert(79%) sepia(34%) saturate(638%) hue-rotate(4deg) brightness(96%) contrast(88%);
 }
+/* INGRANDIMENTO IMMAGINE INTRO */
+.hero-art {
+  max-width: 680px;
+  height: 480px;
+  transform: scale(1.08);
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
