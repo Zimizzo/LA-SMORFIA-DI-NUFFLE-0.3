@@ -10,3 +10,38 @@ main{position:relative;z-index:1;max-width:1200px;margin:auto;padding:0 28px}.pa
 footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;border-top:1px solid #ffffff14;background:#120c19;color:var(--gold)}footer b{display:block;font:700 12px Cinzel;letter-spacing:3px}footer span{display:block;font-size:9px;letter-spacing:1.3px;color:#b9a9c0;margin:9px 0 17px}footer small{font-size:9px;letter-spacing:2px;color:#806f88}.footer-star{font-size:18px;margin-bottom:9px}.toast{position:fixed;z-index:30;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#f1d18e;color:#24172c;padding:12px 18px;border-radius:8px;font-weight:900;font-size:13px;box-shadow:var(--shadow);transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:850px){.hero{grid-template-columns:1fr;gap:25px;padding-top:40px}.hero-art{height:330px;max-width:560px;width:100%;margin:auto}.cards-grid{grid-template-columns:repeat(2,1fr)}nav{gap:14px}.topbar{gap:15px}}
 @media(max-width:620px){.topbar{height:70px;padding:0 17px}.menu-toggle{display:block;order:3}nav{display:none;position:absolute;top:69px;left:0;right:0;background:#1b1125;padding:18px 22px;flex-direction:column;border-bottom:1px solid var(--line)}nav.open{display:flex}.live-pill{display:none}main{padding:0 17px}.page{padding:43px 0 60px}.hero{padding:30px 0 42px}.hero h1{font-size:51px}.hero-art{height:285px}.rule-strip{margin-bottom:48px}.rule-strip strong{font-size:26px}.rule-strip span{font-size:8px;letter-spacing:1px}.rule-grid{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.cards-grid{grid-template-columns:1fr}.events-grid{grid-template-columns:1fr}.big-events{grid-template-columns:1fr}.admin-panel form{flex-direction:column;align-items:stretch}.admin-stats{flex-direction:column}.card-toolbar{gap:10px}.single-card{padding:15px}.event-cell{min-height:58px}.hero-text{font-size:14px}}
+/* Numerazione circolare degli eventi */
+.event-badge {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #f7d995, #dba84e);
+  color: #24172c;
+  border: 1px solid #fff0bd;
+  font-family: Cinzel, serif;
+  font-size: 11px;
+  font-weight: 900;
+  box-shadow: 0 2px 7px #0005;
+  flex-shrink: 0;
+}
+
+.mini-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-event .event-badge {
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  font-size: 10px;
+}
+
+.mini-event > span:last-child {
+  flex: 1;
+}
