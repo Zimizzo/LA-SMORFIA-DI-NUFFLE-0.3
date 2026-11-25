@@ -99,7 +99,7 @@
       const count = ids.filter(id => marked.has(id)).length;
       return `<article class="card-tile">
         <div class="tile-top"><span class="tile-number">CARTELLA #${c.card_number}</span><span class="tile-count">${count}/6 segnati</span></div>
-        <div class="mini-events">${ids.map(id => `<div class="mini-event ${marked.has(id)?"done":""}">${esc(eventName(id))}</div>`).join("")}</div>
+        <div class="mini-events">${ids.map(id => `<div class="mini-event ${marked.has(id)?"done":""}">   <span class="event-badge">${String(id).padStart(2,"0")}</span>   <span>${esc(eventName(id))}</span> </div>`).join("")}</div>
         <div class="tile-actions"><button class="btn btn-gold" data-open="${esc(c.id)}">Apri cartella</button><button class="btn btn-ghost" data-share="${esc(c.id)}" aria-label="Condividi cartella">↗</button></div>
       </article>`;
     }).join("") || `<div class="notice" style="grid-column:1/-1">Nessuna cartella corrisponde alla ricerca.</div>`;
@@ -126,14 +126,14 @@
     const ids = (currentCard.events || []).map(Number);
     const count = ids.filter(id => marked.has(id)).length;
     $("my-card").innerHTML = `<div class="single-card-head"><span>✦ BOLOGNABOWL · LA SMORFIA DI NUFFLE ✦</span><h2>CARTELLA #${currentCard.card_number}</h2><p>Sei eventi. Infinite possibilità di disastro.</p></div>
-      <div class="big-events">${ids.map((id,i) => `<button class="event-cell ${marked.has(id)?"done":""}" data-event="${id}"><span class="cell-no">${String(i+1).padStart(2,"0")}</span><span class="cell-text">${esc(eventName(id))}</span><span class="check">${marked.has(id)?"✓":"○"}</span></button>`).join("")}</div>
+      <div class="big-events">${ids.map((id,i) => `<button class="event-cell ${marked.has(id)?"done":""}" data-event="${id}"><span class="event-badge">${String(id).padStart(2,"0")}</span><span class="cell-text">${esc(eventName(id))}</span><span class="check">${marked.has(id)?"✓":"○"}</span></button>`).join("")}</div>
       <div class="card-foot"><span>AVANZAMENTO</span><strong>${count} / 6 EVENTI</strong></div>`;
     $("my-card").querySelectorAll("[data-event]").forEach(b => b.addEventListener("click", () => toggleEvent(Number(b.dataset.event))));
   }
   function renderEvents() {
     $("events-grid").innerHTML = EVENTS.map((name,i) => {
       const id=i+1, done=marked.has(id);
-      return `<button class="global-event ${done?"done":""}" data-event="${id}"><span class="event-no">${String(id).padStart(2,"0")}</span><span class="event-name">${esc(name)}</span><span class="check">${done?"✓":"○"}</span></button>`;
+      return `<button class="global-event ${done?"done":""}" data-event="${id}"><span class="event-badge">${String(id).padStart(2,"0")}</span><span class="event-name">${esc(name)}</span><span class="check">${done?"✓":"○"}</span></button>`;
     }).join("");
     $("events-grid").querySelectorAll("[data-event]").forEach(b => b.addEventListener("click", () => toggleEvent(Number(b.dataset.event))));
     $("event-progress-text").textContent = `${marked.size} / 30 eventi segnati`;
