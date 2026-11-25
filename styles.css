@@ -207,7 +207,8 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
 }
 /* NEVICATA SULLA PAGINA PRINCIPALE */
 
-/* EFFETTO NEVE */
+/* NEVE BIANCA SU TUTTI I DISPOSITIVI */
+
 #page-home {
   position: relative;
   isolation: isolate;
@@ -218,106 +219,55 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
 #page-home::after {
   content: "";
   position: absolute;
-  inset: 0;
-  display: block;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
   background-repeat: repeat;
-}
-
-#page-home::before {
-  background-image:
-    radial-gradient(3px 3px at 40px 60px, #fff 99%, transparent),
-    radial-gradient(2px 2px at 130px 180px, #fff 99%, transparent),
-    radial-gradient(3px 3px at 250px 100px, #fff 99%, transparent),
-    radial-gradient(2px 2px at 300px 250px, #fff 99%, transparent);
-  background-size: 350px 350px;
-  animation: snowfall 12s linear infinite;
-  opacity: 0.75;
-}
-
-#page-home::after {
-  background-image:
-    radial-gradient(2px 2px at 80px 120px, #fff 99%, transparent),
-    radial-gradient(3px 3px at 200px 40px, #fff 99%, transparent),
-    radial-gradient(2px 2px at 280px 220px, #fff 99%, transparent);
-  background-size: 250px 250px;
-  animation: snowfall 18s linear infinite;
-  opacity: 0.6;
-}
-
-#page-home > * {
-  position: relative;
-  z-index: 1;
-}
-
-@keyframes snowfall {
-  from {
-    background-position: 0 -350px;
-  }
-  to {
-    background-position: 100px 350px;
-  }
-}
-
-/* CORREZIONE PER CELLULARI */
-@media (max-width: 700px) {
-  #page-home {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-#page-home::before,
-#page-home::after {
-  content: "";
-  position: absolute;
-  inset: -350px 0 0;
-  pointer-events: none;
-  z-index: 0;
-  background-repeat: repeat;
-  background-color: transparent;
+  filter: none;
   mix-blend-mode: normal;
 }
 
 #page-home::before {
   background-image:
-    radial-gradient(circle, #ffffff 2px, transparent 2.5px),
-    radial-gradient(circle, #ffffff 1.5px, transparent 2px),
-    radial-gradient(circle, #ffffff 2px, transparent 2.5px);
+    radial-gradient(circle, #fff 2px, transparent 2.5px),
+    radial-gradient(circle, #fff 1.5px, transparent 2px),
+    radial-gradient(circle, #fff 2px, transparent 2.5px);
   background-size: 180px 180px, 240px 240px, 300px 300px;
-  background-position: 20px 30px, 100px 80px, 50px 150px;
   animation: snowfall 12s linear infinite;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 #page-home::after {
   background-image:
-    radial-gradient(circle, #ffffff 1.5px, transparent 2px),
-    radial-gradient(circle, #ffffff 2px, transparent 2.5px);
+    radial-gradient(circle, #fff 2px, transparent 2.5px),
+    radial-gradient(circle, #fff 1.5px, transparent 2px);
   background-size: 130px 130px, 220px 220px;
-  background-position: 60px 20px, 150px 100px;
   animation: snowfall 18s linear infinite;
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 #page-home > * {
   position: relative;
-  z-index: 1;
+  z-index: 3;
 }
 
 @keyframes snowfall {
   from {
-    background-position: 20px -350px, 100px -250px, 50px -150px;
+    background-position: 0 -350px, 100px -250px, 50px -150px;
   }
   to {
     background-position: 100px 700px, 180px 800px, 120px 900px;
   }
 }
-  #page-home::after {
-    opacity: 0.7;
-  }
+
+/* SPAZIO SOPRA L'INTRO */
+#page-home {
+  padding-top: 15px;
 }
+
 #page-home .hero {
   padding-top: 0 !important;
   margin-top: 0 !important;
@@ -330,37 +280,6 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
 
 #page-home .eyebrow {
   margin-top: 0 !important;
-}
-/* NEVE BIANCA - CORREZIONE PER TUTTI I DISPOSITIVI */
-
-#page-home::before,
-#page-home::after {
-  filter: none !important;
-  mix-blend-mode: normal !important;
-  background-color: transparent !important;
-  opacity: 1 !important;
-}
-
-#page-home::before {
-  background-image:
-    radial-gradient(circle, #ffffff 2px, transparent 3px),
-    radial-gradient(circle, #ffffff 1.5px, transparent 2.5px),
-    radial-gradient(circle, #ffffff 2.5px, transparent 3px) !important;
-}
-
-#page-home::after {
-  background-image:
-    radial-gradient(circle, #ffffff 2px, transparent 3px),
-    radial-gradient(circle, #ffffff 1.5px, transparent 2.5px) !important;
-}
-
-@media (max-width: 700px) {
-  #page-home::before,
-  #page-home::after {
-    filter: none !important;
-    mix-blend-mode: normal !important;
-    opacity: 1 !important;
-  }
 }
 /* RIDUZIONE SPAZIO SOPRA IL TITOLO */
 #page-home .hero {
