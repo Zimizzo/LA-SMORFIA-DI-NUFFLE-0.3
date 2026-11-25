@@ -196,6 +196,8 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
   max-width: 680px;
   height: 480px;
   transform: scale(1.15);
+ position: relative;
+ top: 15px;
 }
 
 .hero-image {
