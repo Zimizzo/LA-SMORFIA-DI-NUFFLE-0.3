@@ -194,20 +194,7 @@
     refreshViews();
   }
 
-    const term = $("card-search").value.trim();
-    const list = cards.filter(c => !term || String(c.card_number).includes(term));
-    grid.innerHTML = list.map(c => {
-      const ids = (c.events || []).map(Number);
-      const count = ids.filter(id => marked.has(id)).length;
-      return `<article class="card-tile">
-        <div class="tile-top"><span class="tile-number">CARTELLA #${c.card_number}</span><span class="tile-count">${count}/6 segnati</span></div>
-        <div class="mini-events">${ids.map(id => `<div class="mini-event ${marked.has(id)?"done":""}">   <span class="event-badge">${String(id).padStart(2,"0")}</span>   <span>${esc(eventName(id))}</span> </div>`).join("")}</div>
-        <div class="tile-actions"><button class="btn btn-gold" data-open="${esc(c.id)}">Apri cartella</button><button class="btn btn-ghost" data-share="${esc(c.id)}" aria-label="Condividi cartella">↗</button></div>
-      </article>`;
-    }).join("") || `<div class="notice" style="grid-column:1/-1">Nessuna cartella corrisponde alla ricerca.</div>`;
-    grid.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => { location.hash = "cartella=" + encodeURIComponent(b.dataset.open); }));
-    grid.querySelectorAll("[data-share]").forEach(b => b.addEventListener("click", () => shareCard(b.dataset.share)));
-  }
+   
 
   function openCard(id) {
     const card = getCard(id);
