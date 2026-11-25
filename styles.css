@@ -262,16 +262,58 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
 
 /* CORREZIONE PER CELLULARI */
 @media (max-width: 700px) {
-  #page-home::before,
-  #page-home::after {
-    display: block !important;
-    animation-play-state: running !important;
-  }
+  #page-home {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
 
-  #page-home::before {
-    opacity: 0.85;
-  }
+#page-home::before,
+#page-home::after {
+  content: "";
+  position: absolute;
+  inset: -350px 0 0;
+  pointer-events: none;
+  z-index: 0;
+  background-repeat: repeat;
+  background-color: transparent;
+  mix-blend-mode: normal;
+}
 
+#page-home::before {
+  background-image:
+    radial-gradient(circle, #ffffff 2px, transparent 2.5px),
+    radial-gradient(circle, #ffffff 1.5px, transparent 2px),
+    radial-gradient(circle, #ffffff 2px, transparent 2.5px);
+  background-size: 180px 180px, 240px 240px, 300px 300px;
+  background-position: 20px 30px, 100px 80px, 50px 150px;
+  animation: snowfall 12s linear infinite;
+  opacity: 0.85;
+}
+
+#page-home::after {
+  background-image:
+    radial-gradient(circle, #ffffff 1.5px, transparent 2px),
+    radial-gradient(circle, #ffffff 2px, transparent 2.5px);
+  background-size: 130px 130px, 220px 220px;
+  background-position: 60px 20px, 150px 100px;
+  animation: snowfall 18s linear infinite;
+  opacity: 0.65;
+}
+
+#page-home > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes snowfall {
+  from {
+    background-position: 20px -350px, 100px -250px, 50px -150px;
+  }
+  to {
+    background-position: 100px 700px, 180px 800px, 120px 900px;
+  }
+}
   #page-home::after {
     opacity: 0.7;
   }
