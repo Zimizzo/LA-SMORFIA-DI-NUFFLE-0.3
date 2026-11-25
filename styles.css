@@ -145,3 +145,24 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
     height: 320px;
   }
 }
+/* LOGO DORATO NELL'INTESTAZIONE */
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(79%) sepia(34%) saturate(638%) hue-rotate(4deg) brightness(96%) contrast(88%);
+}
