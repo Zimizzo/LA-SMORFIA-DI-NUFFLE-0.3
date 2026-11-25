@@ -311,6 +311,7 @@ reservations = reservationRows || [];
         } else loadMarks();
       })
       .on("postgres_changes",{event:"*",schema:"public",table:"nuffle_cards"}, () => reloadCards())
+      .on("postgres_changes",{event:"*",schema:"public",table:"nuffle_reservations"}, () => loadReservations())
       .subscribe();
   }
   function renderAdminStats() {
