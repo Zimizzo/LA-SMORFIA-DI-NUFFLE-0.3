@@ -166,3 +166,28 @@ footer{position:relative;z-index:1;text-align:center;padding:36px 20px 42px;bord
   object-fit: contain;
   filter: brightness(0) saturate(100%) invert(79%) sepia(34%) saturate(638%) hue-rotate(4deg) brightness(96%) contrast(88%);
 }
+/* LOGO NEL CERCHIETTO */
+.brand-mark {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+  flex: 0 0 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--gold) !important;
+  border-radius: 50% !important;
+  background: #2e203c !important;
+  box-shadow: none !important;
+  padding: 5px;
+}
+
+.brand-mark img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(79%) sepia(34%) saturate(638%) hue-rotate(4deg) brightness(96%) contrast(88%);
+}
