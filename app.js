@@ -194,7 +194,6 @@
     refreshViews();
   }
 
-   
 
   function openCard(id) {
     const card = getCard(id);
